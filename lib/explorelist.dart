@@ -4,11 +4,27 @@ import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'widgets/event_tab_widget.dart';
 import 'widgets/thinsksitem.dart';
 
-final ScrollController scrollController = ScrollController();
-final ScrollController scrollController1 = ScrollController();
-
-class ExploreList extends StatelessWidget {
+class ExploreList extends StatefulWidget {
   const ExploreList({super.key});
+
+  @override
+  _ExploreListState createState() => _ExploreListState();
+}
+
+class _ExploreListState extends State<ExploreList> {
+  final ScrollController scrollController = ScrollController();
+  final GlobalKey contentKey = GlobalKey();
+  final GlobalKey thingsToSeeKey = GlobalKey();
+  final GlobalKey foodKey = GlobalKey();
+  final GlobalKey hotelsKey = GlobalKey();
+
+  void _scrollToSection(GlobalKey key) {
+    Scrollable.ensureVisible(
+      key.currentContext!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +34,13 @@ class ExploreList extends StatelessWidget {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         title: const Center(
-            child: Text(
-          'Explore',
-        )),
+          child: Text('Explore'),
+        ),
         actions: const [SizedBox(width: 60)],
       ),
       body: NestedScrollView(
         controller: scrollController,
-        headerSliverBuilder: (context, innerOverscrollY) {
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
               leading: const SizedBox(),
@@ -88,295 +103,198 @@ class ExploreList extends StatelessWidget {
             ),
           ];
         },
-        body: Container(
-          width: size.width,
-          height: size.height,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          color: Colors.white,
-          child: CustomScrollView(
-            slivers: [
-              SliverStickyHeader(
-                header: Container(
-                  color: Colors.white,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Varkala',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 29,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w700)),
-                      const Text('Cliffside Serenity, Spiritual Awakening.',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 13,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w500)),
-                      const SizedBox(height: 20),
-                      EventTabWidget(
-                        s1: () {
-                          scrollController.animateTo(370,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut);
-                        },
-                        s2: () {
-                          scrollController.animateTo((500),
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut);
-                        },
-                        s3: () {},
-                        s4: () {},
-                      ),
-                    ],
-                  ),
-                ),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 15),
-                          // overview point
-                          const Text(
-                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at tincidunt erat. Cras scelerisque, nunc ac cursus volutpat, orci purus iaculis mauris, a aliquam lacus nulla id nulla. Donec rhoncus ante nec volutpat rhoncus. Sed in odio mauris. Quisque ac placerat nulla, quis ultrices ante. Nam commodo aliquet mauris a pharetra. Ut aliquet quis tortor auctor laoreet.',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 13,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w300,
-                                height: 0),
-                          ),
-                          exploreSubHead(
-                              label: 'Things To See & Do', onpressed: () {}),
-                          const SizedBox(height: 10),
-                          for (var i = 0; i < 3; i++) const ThinksItem(),
-                          exploreSubHead(
-                              label: 'Food To Explore', onpressed: () {}),
-                          const FoodExploreItem(),
-                          const FoodExploreItem(),
-                          exploreSubHead(
-                              label: 'Hotels To Stay', onpressed: () {}),
-                          const HotelExploreItem(),
-                          const HotelExploreItem(),
-                          const HotelExploreItem(),
-                          const SizedBox(height: 50)
-                        ],
-                      );
-                    },
-                    childCount: 1,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget exploreSubHead({String label = '', required Function() onpressed}) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 25, bottom: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label,
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w700)),
-          GestureDetector(
-              onTap: onpressed,
-              child: const Text('View All',
-                  style: TextStyle(
-                      color: Color(0xFF418CFF),
-                      fontSize: 13,
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.w700,
-                      decoration: TextDecoration.underline))),
-        ],
-      ),
-    );
-  }
-}
-
-// height 200+10
-class FoodExploreItem extends StatelessWidget {
-  const FoodExploreItem({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
-      height: 200,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: const [
-            BoxShadow(color: Color(0x3F000000), blurRadius: 1)
-          ]),
-      child: Row(
-        children: [
-          Image.asset('assets/foodexploresmple1.png'),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+        body: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Zeit Varkala',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w700)),
-                      const SizedBox(height: 5),
-                      reviewBoxWithBorder(),
-                      const SizedBox(height: 5),
-                      const Text('Italian, Arabic',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 10,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w400)),
-                    ],
-                  ),
+                  const Text('Varkala',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 29,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w700)),
+                  const Text('Cliffside Serenity, Spiritual Awakening.',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 20),
                   Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 45,
-                        height: 45,
-                        decoration: const ShapeDecoration(
-                            color: Colors.white,
-                            shape: OvalBorder(
-                                side: BorderSide(
-                                    width: 1, color: Color(0xFFFF7134)))),
-                        child: MaterialButton(
-                            onPressed: () {},
-                            padding: EdgeInsets.zero,
-                            shape: const OvalBorder(),
-                            child: Center(
-                                child: Image.asset(
-                                    'assets/icons/arrow_up_small.png',
-                                    height: 30,
-                                    color: const Color(0xFFFF7134)))),
-                      )
+                      TextButton(
+                        onPressed: () {
+                          _scrollToSection(contentKey); // Scroll to Content
+                        },
+                        child: const Text("Content"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _scrollToSection(
+                              thingsToSeeKey); // Scroll to Things To See
+                        },
+                        child: const Text("Things To See"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _scrollToSection(foodKey); // Scroll to Food
+                        },
+                        child: const Text("Food"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _scrollToSection(hotelsKey); // Scroll to Hotels
+                        },
+                        child: const Text("Hotels"),
+                      ),
                     ],
                   )
                 ],
               ),
             ),
-          )
-        ],
+            NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification scrollInfo) {
+                if (scrollInfo is ScrollUpdateNotification) {
+                  print(
+                      "Current scroll position: ${scrollInfo.metrics.pixels}");
+                }
+                return true;
+              },
+              child: Expanded(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverStickyHeader(
+                      header: Container(
+                        color: Colors.white,
+                        child: const SizedBox.shrink(),
+                      ),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 15),
+                                Container(
+                                  key: contentKey,
+                                  child: const Text(
+                                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at tincidunt erat. Cras scelerisque, nunc ac cursus volutpat, orci purus iaculis mauris, a aliquam lacus nulla id nulla. Donec rhoncus ante nec volutpat rhoncus. Sed in odio mauris. Quisque ac placerat nulla, quis ultrices ante. Nam commodo aliquet mauris a pharetra. Ut aliquet quis tortor auctor laoreet.',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 13,
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.w300),
+                                  ),
+                                ),
+                                exploreSubHead(
+                                    label: 'Things To See & Do',
+                                    onpressed: () {}),
+                                const SizedBox(height: 10),
+                                for (var i = 0; i < 3; i++)
+                                  ThinksItem(
+                                    key: i == 0 ? thingsToSeeKey : null,
+                                  ),
+                                exploreSubHead(
+                                    label: 'Food To Explore', onpressed: () {}),
+                                FoodExploreItem(key: foodKey),
+                                const FoodExploreItem(),
+                                exploreSubHead(
+                                    label: 'Hotels To Stay', onpressed: () {}),
+                                HotelExploreItem(key: hotelsKey),
+                                const HotelExploreItem(),
+                                const HotelExploreItem(),
+                                const SizedBox(height: 50)
+                              ],
+                            );
+                          },
+                          childCount: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-//height 210+10
-class HotelExploreItem extends StatelessWidget {
-  const HotelExploreItem({super.key});
+Widget exploreSubHead(
+    {required String label, required VoidCallback onpressed}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.arrow_forward),
+          onPressed: onpressed,
+        ),
+      ],
+    ),
+  );
+}
+
+class ThinksItem extends StatelessWidget {
+  const ThinksItem({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
-      height: 210,
-      width: double.maxFinite,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: const [
-            BoxShadow(color: Color(0x3F000000), blurRadius: 1)
-          ]),
-      child: Column(
-        children: [
-          ClipRRect(
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-              child: SizedBox(
-                  height: 150,
-                  child: Image.asset('assets/explorehotelsamplle.png',
-                      width: double.maxFinite, fit: BoxFit.fitWidth))),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Grand Royal Hotel',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18.65,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w700)),
-                      Text('Junction name, Varkala, Kerala',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 9.82,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w400))
-                    ],
-                  ),
-                ),
-                reviewBoxWithBorder(clr: const Color(0xFFFF7134))
-              ],
-            ),
-          )
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        height: 100,
+        color: Colors.grey.shade200,
+        child: const Center(child: Text("Thinks Item")),
       ),
     );
   }
 }
 
-Container reviewBox({String i = '4.8 (17k)'}) {
-  return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      height: 22,
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(25)),
-      child: Row(children: [
-        const Icon(Icons.star, color: Colors.yellow, size: 20),
-        const SizedBox(width: 3),
-        Text(i,
-            style: const TextStyle(
-                color: Colors.black,
-                fontSize: 8.35,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w700))
-      ]));
+class FoodExploreItem extends StatelessWidget {
+  const FoodExploreItem({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        height: 100,
+        color: Colors.grey.shade200,
+        child: const Center(child: Text("Food Item")),
+      ),
+    );
+  }
 }
 
-Widget reviewBoxWithBorder(
-    {String i = '4.8 (17k)', Color clr = const Color(0xFFBABABA)}) {
-  return Container(
-      height: 22,
-      width: 75,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(25),
-          border: Border.all(width: 1, color: clr)),
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.star, color: Colors.yellow, size: 20),
-        const SizedBox(width: 3),
-        Text(i,
-            style: const TextStyle(
-                color: Colors.black,
-                fontSize: 8.35,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w700))
-      ]));
+class HotelExploreItem extends StatelessWidget {
+  const HotelExploreItem({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        height: 100,
+        color: Colors.grey.shade200,
+        child: const Center(child: Text("Hotel Item")),
+      ),
+    );
+  }
 }

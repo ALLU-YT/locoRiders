@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrollable_list_tab_scroller/scrollable_list_tab_scroller.dart';
 
 class EventTabWidget extends StatelessWidget {
   const EventTabWidget(
